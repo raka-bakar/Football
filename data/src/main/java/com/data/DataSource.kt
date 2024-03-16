@@ -96,7 +96,8 @@ internal class DataSourceImpl @Inject constructor(
                     emit(CallResult.success(response.data))
                     saveCallResult?.invoke(response.data, response.extra)
                 } else if (response.isFail()) {
-                    val localData = getLocalData()
+                    val localCall = async(Dispatchers.IO){getLocalData()}
+                    val localData = localCall.await()
                     if (localData.isEmpty()) {
                         emit(CallResult.error(response.message, response.code))
                     } else {

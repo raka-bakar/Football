@@ -116,7 +116,6 @@ private fun LoadingItem() {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(5.dp))
-                    .fillMaxWidth()
                     .aspectRatio(1f)
                     .background(MaterialTheme.colorScheme.surface)
                     .shimmer()
@@ -125,7 +124,6 @@ private fun LoadingItem() {
                 modifier = Modifier
                     .padding(2.dp, 5.dp)
                     .height(12.dp)
-                    .fillMaxWidth(0.6f)
                     .background(MaterialTheme.colorScheme.surface)
                     .shimmer()
             )

@@ -13,13 +13,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AllLaunchesViewModel @Inject constructor(
-    private val allLaunchUseCase: AllLaunchUseCase,
+    allLaunchUseCase: AllLaunchUseCase,
     dispatcherIo: CoroutineDispatcher,
 ) : ViewModel() {
 
     val allLaunchesList = allLaunchUseCase.getAllLaunches().stateIn(
         viewModelScope + dispatcherIo,
-        SharingStarted.Eagerly,
+        SharingStarted.WhileSubscribed(),
         CallResult.loading()
     )
 }

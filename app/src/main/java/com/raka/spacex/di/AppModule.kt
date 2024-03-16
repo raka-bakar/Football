@@ -2,7 +2,7 @@ package com.raka.spacex.di
 
 import android.content.Context
 import com.data.DataProvider
-import com.raka.spacex.MyApp
+import com.raka.spacex.FootballApp
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 class AppModule {
     @Singleton
     @Provides
-    fun providesApplication(@ApplicationContext context: Context): MyApp = context as MyApp
+    fun providesApplication(@ApplicationContext context: Context): FootballApp = context as FootballApp
 
     @Singleton
     @Provides
