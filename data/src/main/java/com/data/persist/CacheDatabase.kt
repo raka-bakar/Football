@@ -2,10 +2,8 @@ package com.data.persist
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 
-@Database(entities = [DbLaunchItem::class], version = 1)
-@TypeConverters(Converter::class)
+@Database(entities = [DbTeamItem::class], version = 1)
 internal abstract class CacheDatabase : RoomDatabase() {
-    abstract fun feedDao(): LaunchDao
+    abstract fun footballDao(): FootballTeamDao
 }

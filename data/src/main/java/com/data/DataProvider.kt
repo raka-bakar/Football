@@ -2,7 +2,6 @@ package com.data
 
 import android.content.Context
 import com.data.di.DaggerAppComponent
-import com.data.models.request.DetailLaunchApiRequest
 import javax.inject.Inject
 
 /**
@@ -16,7 +15,7 @@ class DataProvider(context: Context) {
         component.inject(this)
     }
 
-    fun getAllLaunches() = dataSource.getAllLaunches()
+    fun getAllTeams(sortedByValue: Boolean) = dataSource.getAllTeams(sortedByValue)
 
-    fun getSingleLaunch(request: DetailLaunchApiRequest) = dataSource.getSingleLaunch(request)
+    fun getSingleTeam(teamId: String) = dataSource.getSingleTeam(teamId)
 }

@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">Football</string>
-    <string name="desc_img_feed">Feed Image</string>
-    <string name="lbl_all_launches_list">List of All Launches</string>
-    <string name="lbl_data_empty">No Data Found</string>
-    <string name="lbl_error">Unknown Error, fail to fetch data</string>
+    <string name="desc_img">Feed-Bild</string>
+    <string name="title">all about clubs</string>
+    <string name="lbl_all_launches_list">Liste aller Fußballmannschaften</string>
+    <string name="lbl_data_empty">Keine Daten gefunden</string>
+    <string name="lbl_error">Unbekannter Fehler, Daten konnten nicht abgerufen werden</string>
+    <string name="value_format">%1$s Millionen</string>
+    <string name="detail_team_format">Der club %1$s aus %2$s hat einen Wert von %3$s Millionen Euro.
+        %4$s konnte bislang %5$s Siege auf europäischer Ebene erreichen.</string>
 </resources>

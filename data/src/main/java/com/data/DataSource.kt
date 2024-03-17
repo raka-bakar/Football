@@ -1,16 +1,15 @@
 package com.data
 
 import com.data.api.ApiService
-import com.data.models.Launch
-import com.data.models.request.DetailLaunchApiRequest
-import com.data.models.response.singlelaunch.DetailLaunchApiResponse
-import com.data.persist.DbLaunchItem
-import com.data.persist.LaunchDao
+import com.data.models.TeamItem
+import com.data.persist.DbTeamItem
+import com.data.persist.FootballTeamDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
@@ -20,62 +19,81 @@ import javax.inject.Inject
 internal interface DataSource {
 
     /**
-     * get list of feeds that match one of more of the tags
-     * @return response of list of launches
+     * get list of football teams
+     * @return response of list of team
      */
-    fun getAllLaunches(): Flow<CallResult<List<Launch>>>
+    fun getAllTeams(sortedByValue: Boolean): Flow<CallResult<List<TeamItem>>>
 
     /**
-     * get the saved feedItem,
-     * @param request that contains the ID of the launch
-     * @return flow of one feedItem
+     * get a saved TeamItem,
+     * @param request that contains the ID of the football team
+     * @return flow of one TeamItem
      */
-    fun getSingleLaunch(request: DetailLaunchApiRequest): Flow<CallResult<DetailLaunchApiResponse>>
+    fun getSingleTeam(teamId: String): Flow<CallResult<TeamItem>>
 }
 
 internal class DataSourceImpl @Inject constructor(
     private val api: ApiService,
-    private val dao: LaunchDao
+    private val dao: FootballTeamDao
 ) : DataSource {
-    override fun getAllLaunches(): Flow<CallResult<List<Launch>>> {
+    override fun getAllTeams(sortedByValue: Boolean): Flow<CallResult<List<TeamItem>>> {
         return getNetworkFlow({
-            val res = ApiService.apiCall { api.getAllLaunches() }
+            val res = ApiService.apiCall { api.getAllTeams() }
             res.copyConvert {
                 it?.map { item ->
-                    Launch(
-                        id = item.id ?: "0",
-                        flightNumber = item.flightNumber.toString(),
-                        imgUrl = item.links?.patch?.small ?: "",
-                        date = item.dateLocal,
-                        isSuccess = item.success ?: false,
+                    TeamItem(
+                        id = item.id,
+                        country = item.country ?: "",
                         name = item.name ?: "",
-                        details = item.details ?: ""
+                        europeanTitles = item.europeanTitles ?: 0,
+                        value = item.value ?: 0,
+                        image = item.image ?: ""
                     )
                 }
                     ?: emptyList()
             }
         }) { items, _ ->
             val dbList = items.map { item ->
-                DbLaunchItem(
+                DbTeamItem(
                     id = item.id,
-                    flightNumber = item.flightNumber,
-                    imgUrl = item.imgUrl,
-                    date = item.date,
-                    isSuccess = item.isSuccess,
+                    country = item.country,
                     name = item.name,
-                    details = item.details
+                    europeanTitles = item.europeanTitles,
+                    value = item.value,
+                    image = item.image
                 )
             }
-            dao.insertLaunchItem(dbList)
+            dao.insertTeamItem(dbList)
+        }.map { result ->
+            result.copyConvert { list ->
+                if (sortedByValue) {
+                    list?.sortedByDescending {
+                        it.value
+                    }
+                } else {
+                    list?.sortedBy {
+                        it.name
+                    }
+                }
+            }
         }
     }
 
-    override fun getSingleLaunch(request: DetailLaunchApiRequest):
-        Flow<CallResult<DetailLaunchApiResponse>> {
-        return getNetworkFlow({
-            val res = ApiService.apiCall { api.getSingleLaunch(request.id) }
-            res.copyConvert { it }
-        })
+    override fun getSingleTeam(teamId: String):
+        Flow<CallResult<TeamItem>> = flow {
+        val dbItem = dao.loadSingleTeam(teamId)
+        emit(
+            CallResult.success(
+                TeamItem(
+                    id = dbItem.id,
+                    country = dbItem.country,
+                    name = dbItem.name,
+                    europeanTitles = dbItem.europeanTitles,
+                    value = dbItem.value,
+                    image = dbItem.image
+                )
+            )
+        )
     }
 
     /**
@@ -96,7 +114,7 @@ internal class DataSourceImpl @Inject constructor(
                     emit(CallResult.success(response.data))
                     saveCallResult?.invoke(response.data, response.extra)
                 } else if (response.isFail()) {
-                    val localCall = async(Dispatchers.IO){getLocalData()}
+                    val localCall = async(Dispatchers.IO) { getLocalData() }
                     val localData = localCall.await()
                     if (localData.isEmpty()) {
                         emit(CallResult.error(response.message, response.code))
@@ -107,16 +125,15 @@ internal class DataSourceImpl @Inject constructor(
             }
         }.onStart { emit(CallResult.loading()) }
 
-    private fun getLocalData(): List<Launch> {
-        val result = dao.loadLaunchItem().map {
-            Launch(
-                id = it.id,
-                flightNumber = it.flightNumber,
-                imgUrl = it.imgUrl,
-                isSuccess = it.isSuccess,
-                name = it.name,
-                date = it.date,
-                details = it.details
+    private fun getLocalData(): List<TeamItem> {
+        val result = dao.loadAllTeams().map { item ->
+            TeamItem(
+                id = item.id,
+                country = item.country,
+                name = item.name,
+                europeanTitles = item.europeanTitles,
+                value = item.value,
+                image = item.image
             )
         }
         return result

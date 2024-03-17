@@ -1,6 +1,5 @@
 package com.data.di
 
-import com.data.adapter.ZonedDateTimeAdapter
 import com.data.api.ApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -10,12 +9,11 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.time.ZonedDateTime
 import javax.inject.Singleton
 
 @Module
 internal class NetworkModule {
-    private val baseUrl = "https://api.spacexdata.com/"
+    private val baseUrl = "https://public.allaboutapps.at/hiring/"
 
     /**
      * provides LoggingInterceptor to set logging config in okHttp interface
@@ -45,7 +43,6 @@ internal class NetworkModule {
     @Singleton
     fun provideMoshi(): Moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
-        .add(ZonedDateTime::class.java, ZonedDateTimeAdapter().nullSafe())
         .build()
 
     /**

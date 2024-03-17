@@ -1,28 +1,18 @@
 package com.data.api
 
 import com.data.CallResult
-import com.data.models.response.alllaunches.AllLaunchesResponseItem
-import com.data.models.response.singlelaunch.DetailLaunchApiResponse
+import com.data.models.response.teams.AllTeamsResponseItem
 import okhttp3.internal.toHeaderList
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Path
 
 interface ApiService {
     /**
-     * get list of feeds that match one of more of the tags
-     * @return response of list of launches
+     * get list of All teams
+     * @return response of list of AllTeamsResponseItem
      */
-    @GET("v4/launches")
-    suspend fun getAllLaunches(): Response<List<AllLaunchesResponseItem>>
-
-    /**
-     * get list of feeds that match one of more of the tags
-     * @param id of the launch
-     * @return response of list of launches
-     */
-    @GET("v4/launches/{id}")
-    suspend fun getSingleLaunch(@Path("id")id: String): Response<DetailLaunchApiResponse>
+    @GET("clubs.json")
+    suspend fun getAllTeams(): Response<List<AllTeamsResponseItem>>
 
     companion object {
         /**

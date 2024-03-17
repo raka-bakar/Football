@@ -3,8 +3,7 @@ package com.data.di
 import android.content.Context
 import androidx.room.Room
 import com.data.persist.CacheDatabase
-import com.data.persist.Converter
-import com.data.persist.LaunchDao
+import com.data.persist.FootballTeamDao
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -22,13 +21,13 @@ internal class DatabaseModule {
             context,
             CacheDatabase::class.java,
             "cache"
-        ).addTypeConverter(Converter(moshi))
+        )
             .fallbackToDestructiveMigration().build()
     }
 
     @Provides
     @Singleton
-    fun provideLaunchDao(cacheDatabase: CacheDatabase): LaunchDao {
-        return cacheDatabase.feedDao()
+    fun provideLaunchDao(cacheDatabase: CacheDatabase): FootballTeamDao {
+        return cacheDatabase.footballDao()
     }
 }
