@@ -2,6 +2,7 @@ package com.raka.football.ui.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -39,44 +40,7 @@ fun DetailScreen(
     callResult: CallResult<TeamItem>,
     onBackClicked: () -> Unit
 ) {
-    when (callResult.status) {
-        CallResult.Status.SUCCESS -> {
-            val footballTeam = callResult.data
-            if (footballTeam != null) {
-                FootballTeamDetail(item = footballTeam, onBackClicked = onBackClicked)
-            }
-        }
-
-        CallResult.Status.LOADING, CallResult.Status.IDLE -> {
-            LoadingView()
-        }
-
-        CallResult.Status.ERROR -> {
-            Column {
-                TopAppBar(
-                    actions = {
-                        IconButton(onClick = onBackClicked) {
-                            Icon(
-                                Icons.Default.ArrowBack,
-                                contentDescription = stringResource(id = R.string.desc_img),
-                                tint = Color.White
-                            )
-                        }
-                    },
-                    title = {},
-                    colors = TopAppBarDefaults
-                        .topAppBarColors(containerColor = colorResource(id = R.color.green))
-                )
-                DisplayError(message = stringResource(id = R.string.lbl_error))
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
-@Composable
-fun FootballTeamDetail(item: TeamItem, onBackClicked: () -> Unit) {
-    Column {
+    Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
             navigationIcon = {
                 IconButton(onClick = onBackClicked) {
@@ -88,15 +52,40 @@ fun FootballTeamDetail(item: TeamItem, onBackClicked: () -> Unit) {
                 }
             },
             title = {
-                Text(
-                    text = item.name,
-                    color = colorResource(id = R.color.white)
-                )
+                if (callResult.status == CallResult.Status.SUCCESS) {
+                    Text(
+                        text = callResult.data?.name ?: "",
+                        color = colorResource(id = R.color.white)
+                    )
+                }
             },
             colors = TopAppBarDefaults
                 .topAppBarColors(containerColor = colorResource(id = R.color.green))
         )
 
+        when (callResult.status) {
+            CallResult.Status.SUCCESS -> {
+                val footballTeam = callResult.data
+                if (footballTeam != null) {
+                    FootballTeamDetail(item = footballTeam)
+                }
+            }
+
+            CallResult.Status.LOADING, CallResult.Status.IDLE -> {
+                LoadingView()
+            }
+
+            CallResult.Status.ERROR -> {
+                DisplayError(message = stringResource(id = R.string.lbl_error))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun FootballTeamDetail(item: TeamItem) {
+    Column {
         ConstraintLayout(
             modifier = Modifier
                 .height(dimensionResource(id = R.dimen.detail_container_size))

@@ -15,6 +15,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -91,7 +92,9 @@ fun HomeScreen(
  */
 @Composable
 private fun AllTeamsListView(list: List<TeamItem>, navigateToDetail: (String) -> Unit) {
-    LazyColumn(modifier = Modifier.fillMaxHeight()) {
+    LazyColumn(modifier = Modifier
+        .fillMaxHeight()
+        .testTag("HomeList")) {
         itemsIndexed(items = list) { index, team ->
             TeamItemView(item = team, navigateToDetail = navigateToDetail)
             if (index < list.lastIndex) {

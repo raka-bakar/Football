@@ -8,17 +8,14 @@ import com.raka.football.ui.navigation.MainNavigation
 import com.raka.football.usecase.AllTeamsUseCase
 import com.raka.football.util.RefreshFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    allTeamsUseCase: AllTeamsUseCase,
-    dispatcherIo: CoroutineDispatcher,
+    allTeamsUseCase: AllTeamsUseCase
 ) : ViewModel() {
 
     private val args = MainNavigation.Home.Arguments(savedStateHandle)
@@ -27,7 +24,7 @@ class HomeViewModel @Inject constructor(
 
     val allTeamsList = RefreshFlow {
         allTeamsUseCase.getAllTeams(sortedByValue = sortedByValue.value).stateIn(
-            viewModelScope + dispatcherIo,
+            viewModelScope,
             SharingStarted.WhileSubscribed(),
             CallResult.loading()
         )

@@ -3,24 +3,27 @@ package com.raka.football
 import androidx.lifecycle.SavedStateHandle
 import com.data.CallResult
 import com.data.models.TeamItem
+import com.raka.MainDispatcherRule
 import com.raka.football.ui.detail.DetailViewModel
 import com.raka.football.ui.navigation.MainNavigation
 import com.raka.football.usecase.SingleTeamUseCase
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert
+import org.junit.Rule
 import org.junit.Test
 
 class DetailViewModelTest {
     private val savedStateHandle = mockk<SavedStateHandle>()
     private val useCase = mockk<SingleTeamUseCase>()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     @Test
-    fun `football team is fetched correctly`() {
+    fun `football team is fetched correctly`() = runBlocking {
         val teamItem = TeamItem(
             id = "959cd262-cc20-4e9d-93c1-241c265c7bbe",
             country = "Frankreich",
@@ -40,7 +43,6 @@ class DetailViewModelTest {
         )
         val detailViewModel = DetailViewModel(
             savedStateHandle = savedStateHandle,
-            dispatcherIo = UnconfinedTestDispatcher(),
             singleTeamUseCase = useCase
         )
         Assert.assertEquals(teamItem, detailViewModel.footballTeam.value.data)

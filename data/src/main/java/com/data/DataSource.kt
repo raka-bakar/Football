@@ -2,8 +2,8 @@ package com.data
 
 import com.data.api.ApiService
 import com.data.models.TeamItem
-import com.data.persist.DbTeamItem
-import com.data.persist.FootballTeamDao
+import com.data.db.DbTeamItem
+import com.data.db.FootballTeamDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -14,20 +14,21 @@ import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
 
 /**
- * DataSource to fetch data from a local or network source
+ * DataSource to fetch data from a local or remote source
  */
 internal interface DataSource {
 
     /**
      * get list of football teams
-     * @return response of list of team
+     * @param sortedByValue that contains value of sorted status
+     * @return flow of CallResult that contains list of TeamItem
      */
     fun getAllTeams(sortedByValue: Boolean): Flow<CallResult<List<TeamItem>>>
 
     /**
      * get a saved TeamItem,
      * @param request that contains the ID of the football team
-     * @return flow of one TeamItem
+     * @return flow of CallResult that contains TeamItem
      */
     fun getSingleTeam(teamId: String): Flow<CallResult<TeamItem>>
 }
@@ -125,8 +126,12 @@ internal class DataSourceImpl @Inject constructor(
             }
         }.onStart { emit(CallResult.loading()) }
 
-    private fun getLocalData(): List<TeamItem> {
-        val result = dao.loadAllTeams().map { item ->
+    /**
+     * Helper method that maps DBTeamItem to TeamItem
+     * @return List of TeamItem
+     */
+    private suspend fun getLocalData(): List<TeamItem> {
+        return dao.loadAllTeams().map { item ->
             TeamItem(
                 id = item.id,
                 country = item.country,
@@ -136,6 +141,5 @@ internal class DataSourceImpl @Inject constructor(
                 image = item.image
             )
         }
-        return result
     }
 }

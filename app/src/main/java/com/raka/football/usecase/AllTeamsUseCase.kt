@@ -12,7 +12,8 @@ import javax.inject.Inject
 interface AllTeamsUseCase {
     /**
      * get a list of football teams and return it as a Flow
-     * @return a flow of list of TeamItem
+     * @param sortedByValue that contains value of sorted status
+     * @return a flow CallResult that contains a list of TeamItem
      */
     fun getAllTeams(sortedByValue: Boolean): Flow<CallResult<List<TeamItem>>>
 }

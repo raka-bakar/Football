@@ -2,9 +2,8 @@ package com.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.data.persist.CacheDatabase
-import com.data.persist.FootballTeamDao
-import com.squareup.moshi.Moshi
+import com.data.db.CacheDatabase
+import com.data.db.FootballTeamDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -16,7 +15,7 @@ internal class DatabaseModule {
      */
     @Singleton
     @Provides
-    fun providesRoomDatabase(context: Context, moshi: Moshi): CacheDatabase {
+    fun providesRoomDatabase(context: Context): CacheDatabase {
         return Room.databaseBuilder(
             context,
             CacheDatabase::class.java,

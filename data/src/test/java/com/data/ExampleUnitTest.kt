@@ -1,4 +1,4 @@
-package com.data.di
+package com.data
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

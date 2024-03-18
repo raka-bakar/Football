@@ -1,4 +1,4 @@
-package com.data.persist
+package com.data.db
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -14,9 +14,9 @@ interface FootballTeamDao {
 
     @Transaction
     @Query("SELECT * FROM TeamItem")
-    fun loadAllTeams(): List<DbTeamItem>
+    suspend fun loadAllTeams(): List<DbTeamItem>
 
     @Transaction
     @Query("SELECT * FROM TeamItem WHERE id = :idTeam")
-    fun loadSingleTeam(idTeam: String): DbTeamItem
+    suspend fun loadSingleTeam(idTeam: String): DbTeamItem
 }

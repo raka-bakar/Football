@@ -1,4 +1,4 @@
-package com.data.persist
+package com.data.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

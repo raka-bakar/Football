@@ -28,8 +28,9 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController = navController,
                         route = MainNavigation.Home.graphId,
-                        startDestination = MainNavigation.Home.route
-                    ) {
+                        startDestination = MainNavigation.Home.route,
+
+                        ) {
                         MainNavigation.getAllNavigation().forEach {
                             it.compose(navController)
                         }
